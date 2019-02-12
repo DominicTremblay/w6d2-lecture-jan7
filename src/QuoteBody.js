@@ -2,9 +2,11 @@ import React from 'react';
 import CommentList from './CommentList';
 
 const QuoteBody = props => {
+  const id = props.id;
+
   return (
     <div
-      id="d9424e04-9df6-4b76-86cc-9069ca8ee4bb"
+      id={`cf810aa6-${id}`}
       className="collapse"
       aria-labelledby="headingTwo"
       data-parent="#quote-list"

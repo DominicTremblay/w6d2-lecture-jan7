@@ -1,68 +1,161 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Lecture W6D2
 
-## Available Scripts
+## Topics Covered
 
-In the project directory, you can run:
+- React Boilerplate vs create react app
+- React Component State & Props
+- Data Flow React
+- Component Lifecycle Methods
+- Handling User Action Events
 
-### `npm start`
+## React Boiler Plate
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [React Simple Boilerplate](https://github.com/lighthouse-labs/react-simple-boilerplate)
+- [Create React App](https://github.com/facebook/create-react-app)
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+## React Component State & Props
 
-### `npm test`
+### Things to keep in mind for the state
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### setState is Async
 
-### `npm run build`
+setState might not immediately update the state. It needs to go over these steps:
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. React will merge the object you passed to setState with the current state
+2. React will do a comparison of the old state and the new state
+3. Figure out what did change
+4. Update the DOM
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+setState can have a callback function:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+  this.setState({foo: bar}, ()=> {console.log(this.state)})
+```
 
-### `npm run eject`
+#### Batching
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Multiple setState will be batched by React for performance reason.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+When doing this:
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
+    this.setState({ counter: this.state.counter + 1 });
+    this.setState({ counter: this.state.counter + 1 });
+    this.setState({ counter: this.state.counter + 1 });
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. To increase the performance React will merge the objects together and will perform one state update.
+2. When merging objects, entries with the same keys are overwritten
 
-## Learn More
+The counter will increased only by 1, instead of 3
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Usually, you pass an object to setState to update the state. But you can pass it a function instead:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+    this.setState(state => ({ counter: state.counter + 1 }));
+    this.setState(state => ({ counter: state.counter + 1 }));
+    this.setState(state => ({ counter: state.counter + 1 }));
+```
 
-### Code Splitting
+### React Constructor
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+- You don't need to explicitly have a constructor. Babel will transpile your code and add a constructor for you.
 
-### Analyzing the Bundle Size
+### Class vs Stateless Components
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+- If your component doesn't need to maintain any state, you should use a stateless component. It's cleaner and you don't need to mess around with `this`.
+- Do use a class whenever your component needs to manage the state.
 
-### Making a Progressive Web App
+## Dataflow in React
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+** Data down, actions up **
 
-### Advanced Configuration
+- Data flow in React is unidirectional
+- Data is passed down from a parent component to a child component
+- When the state is manage in the parent component this.setState needs to be executed in the parent
+- A child component can execute a function in the parent through props
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+### Function Binding in ReactJS
 
-### Deployment
+We have few ways to bind functions in ReactJS. The most usual ones are these 2:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+1. Bind functions in the constructor
+2. Use Arrow functions as class properties
 
-### `npm run build` fails to minify
+#### Binding functions in the constructor
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+```
+class someClass extends Component {
+  constructor(props) {
+    super(props);
+    this.someFunction = this.someFunction.bind(this);
+  }
+
+  someFunction() {
+
+  }
+}
+```
+
+#### Arrow Functions
+
+- Arrow functions do not rebind `this`. The arrow function inherits the `this` binding of the class instance
+- It is easier and cleaner to use. However, we must be aware of a few differences
+
+```
+  class someClass extends Component {
+    constructor(props) {
+      super(props);
+    }
+
+    someFunction = () => {
+
+    }
+  }
+```
+
+## Key Differences Between Bound and Arrow Functions
+
+- Arrow functions won't be added to the prototype (no inheritance, cannot call super)
+- Arrow functions are not as performant as bound functions. However, this is not noticeable in most app
+- Arrow functions has a impact on memory. You should care about this only if you're creating multiple instances.
+
+## Component Methods LifeCycle
+
+Each React component has a lifecycle when:
+
+- It's first created
+- The UI needs to be rendered
+- The UI needs to be updated
+- It's done
+
+We can control what happens at each of these lifecycle events:
+
+### Component Creation
+
+1. Constructor
+2. ComponentWillMount() (\*Deprecated)
+3. ComponentDidMount()
+
+- [Component Creation](./component_creation.png)
+
+### Component Re-rendering Because of an Update
+
+1. ComponentWillReceiveProps (\* Replace with getDerivedStateFromProps)
+2. ShouldComponentUpdate()
+3. ComponentWillUpdate() (\* Deprecated)
+4. ComponentDidUpdate()
+
+### Cleanup
+
+- ComponentWillUnmount()
+
+### Updated LifeCycle
+
+- [Lifecycle Events Updated](./lifecycle.jpeg)
+
+** Requests should generally be placed in ComponentDidMount() **
+
+[Play with the Lifecycle Simulator](https://reactarmory.com/guides/lifecycle-simulators)
+
+## References

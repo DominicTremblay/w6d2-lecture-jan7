@@ -89,6 +89,9 @@ class App extends Component {
             </div>
           </div>
         </div>
+        <a href="/quotes/new" class="btn btn-primary">
+          Add Quote
+        </a>
       </div>
     );
   }

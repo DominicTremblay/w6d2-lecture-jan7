@@ -2,7 +2,7 @@
 
 ## Topics Covered
 
-- React Boilerplate vs create react app
+- React Boilerplate and create react app
 - React Component State & Props
 - Data Flow React
 - Component Lifecycle Methods

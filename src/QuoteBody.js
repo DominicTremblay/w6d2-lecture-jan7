@@ -1,9 +1,9 @@
 import React from 'react';
 import CommentList from './CommentList';
 
-const QuoteBody = props => {
-  const id = props.id;
-
+const QuoteBody = ({ id, comments }) => {
+  // const id = props.id;
+  // const comments = props.comments;
   return (
     <div
       id={`cf810aa6-${id}`}
@@ -13,7 +13,7 @@ const QuoteBody = props => {
       aria-expanded="false">
       <div className="card-body">
         <h4>Comments</h4>
-        <CommentList />
+        <CommentList comments={comments} />
         <a
           href="/quotes/d9424e04-9df6-4b76-86cc-9069ca8ee4bb/comments/new"
           className="btn btn-info">

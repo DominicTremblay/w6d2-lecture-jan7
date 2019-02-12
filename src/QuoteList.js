@@ -1,10 +1,21 @@
 import React from 'react';
 import Quote from './Quote';
 
-const QuoteList = props => {
-  const quotes = props.quotes;
+// destructuring directly into the input parameter
+const QuoteList = ({ quotes }) => {
+  // classic
+  // const quotes = props.quotes;
+
+  // ES6 Desctructuring
+  // const { quotes } = props;
+
   const quotesEl = quotes.map(quote => (
-    <Quote id={quote.id} text={quote.text} />
+    <Quote
+      key={quote.id}
+      id={quote.id}
+      text={quote.text}
+      comments={quote.comments}
+    />
   ));
 
   return (

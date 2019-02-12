@@ -1,10 +1,10 @@
 import React from 'react';
 import CommentFrm from './CommentFrm';
 
-const Comment = props => {
+const Comment = ({ id, text }) => {
   return (
     <li className="list-group-item">
-      So awesome comment!
+      {text}
       <CommentFrm />
     </li>
   );

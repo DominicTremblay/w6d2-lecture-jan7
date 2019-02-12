@@ -1,37 +1,55 @@
 import React, { Component } from 'react';
 import './App.css';
 import QuoteList from './QuoteList';
-
+import AddQuote from './AddQuote';
+import uuid from 'uuid';
 class App extends Component {
   state = {
-    quotes: [
-      {
-        id: 3,
-        text: "It's called a hustle, sweetheart.",
-        movie_id: 3,
-        created_at: '2019-02-09T08:02:41.355Z',
-        updated_at: '2019-02-09T08:02:41.355Z',
-        comments: [
-          {
-            id: 1,
-            text: 'Star wars needs to die!',
-            quote_id: 3,
-            created_at: '2019-02-09T08:02:41.366Z',
-            updated_at: '2019-02-09T08:02:41.366Z',
-          },
-        ],
-      },
-    ],
+    quotes: [],
   };
+
+  addQuote = quote => {
+    const newQuote = {
+      id: uuid.v1(),
+      text: quote,
+      comments: [],
+    };
+    // merging my current array of quotes with new quotes
+    const newQuotes = [...this.state.quotes, newQuote];
+
+    this.setState({ quotes: newQuotes }, () => console.log(this.state));
+  };
+
+  componentDidMount() {
+    const url = '/api/quotes';
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+    };
+
+    fetch(url, options)
+      .then(response => response.json())
+      .then(quotes => {
+        // this.setState({ quotes });
+
+        const quotesArr = quotes.map(quoteObj => {
+          quoteObj.comments = quoteObj.comments || [];
+          return quoteObj;
+        });
+
+        this.setState({ quotes: quotesArr }, () => console.log(this.state));
+      });
+  }
 
   render() {
     return (
       <div className="container">
         <h1>Movie Quotes</h1>
         <QuoteList quotes={this.state.quotes} />
-        <a href="/quotes/new" class="btn btn-primary">
-          Add Quote
-        </a>
+        <AddQuote addQuote={this.addQuote} someProps="someprops" />
       </div>
     );
   }
